@@ -19,6 +19,9 @@
 		84C2B20922387709001CCFB5 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2B20822387709001CCFB5 /* User.swift */; };
 		84C2B20C22387D2F001CCFB5 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2B20B22387D2F001CCFB5 /* MapViewController.swift */; };
 		84C2B20E2238927C001CCFB5 /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2B20D2238927C001CCFB5 /* UserSession.swift */; };
+		84C2B21022389BC7001CCFB5 /* StudentInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2B20F22389BC7001CCFB5 /* StudentInformation.swift */; };
+		84C2B21222389C57001CCFB5 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2B21122389C57001CCFB5 /* Location.swift */; };
+		84C2B21422389EBF001CCFB5 /* ErrorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2B21322389EBF001CCFB5 /* ErrorType.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +39,9 @@
 		84C2B20822387709001CCFB5 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		84C2B20B22387D2F001CCFB5 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		84C2B20D2238927C001CCFB5 /* UserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSession.swift; sourceTree = "<group>"; };
+		84C2B20F22389BC7001CCFB5 /* StudentInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentInformation.swift; sourceTree = "<group>"; };
+		84C2B21122389C57001CCFB5 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		84C2B21322389EBF001CCFB5 /* ErrorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorType.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +124,8 @@
 		84C2B20322383917001CCFB5 /* UdacityResponses */ = {
 			isa = PBXGroup;
 			children = (
+				84C2B20F22389BC7001CCFB5 /* StudentInformation.swift */,
+				84C2B20D2238927C001CCFB5 /* UserSession.swift */,
 				84C2B20422383930001CCFB5 /* StudentLocation.swift */,
 			);
 			path = UdacityResponses;
@@ -127,8 +135,9 @@
 			isa = PBXGroup;
 			children = (
 				84C2B20622387119001CCFB5 /* LogIn.swift */,
+				84C2B21122389C57001CCFB5 /* Location.swift */,
+				84C2B21322389EBF001CCFB5 /* ErrorType.swift */,
 				84C2B20822387709001CCFB5 /* User.swift */,
-				84C2B20D2238927C001CCFB5 /* UserSession.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -205,6 +214,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84C2B20222383811001CCFB5 /* UdacityClient.swift in Sources */,
+				84C2B21222389C57001CCFB5 /* Location.swift in Sources */,
 				84C2B20722387119001CCFB5 /* LogIn.swift in Sources */,
 				84C2B1EE22383518001CCFB5 /* OnTheMap.xcdatamodeld in Sources */,
 				84C2B20022383608001CCFB5 /* LogInViewControler.swift in Sources */,
@@ -212,6 +222,8 @@
 				84C2B1E622383518001CCFB5 /* AppDelegate.swift in Sources */,
 				84C2B20E2238927C001CCFB5 /* UserSession.swift in Sources */,
 				84C2B20922387709001CCFB5 /* User.swift in Sources */,
+				84C2B21022389BC7001CCFB5 /* StudentInformation.swift in Sources */,
+				84C2B21422389EBF001CCFB5 /* ErrorType.swift in Sources */,
 				84C2B20C22387D2F001CCFB5 /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

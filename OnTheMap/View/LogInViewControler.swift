@@ -18,7 +18,7 @@ class LogInViewControler: UIViewController {
     
     //MARK: Actions
     @IBAction func loginButtonPressed(_ sender: UIButton) {
-
+        
         print("login was selected")
         activityIndicator.startAnimating()
 
@@ -65,20 +65,6 @@ class LogInViewControler: UIViewController {
         }
         
     }
-    
-
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
 extension UIViewController {

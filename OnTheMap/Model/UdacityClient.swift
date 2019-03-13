@@ -9,6 +9,8 @@
 import Foundation
 
 class UdacityClient: NSObject {
+    
+    
     //Shared Session
     let session = URLSession.shared
     //Parse application ID
@@ -18,19 +20,19 @@ class UdacityClient: NSObject {
     
     struct Auth {
         static var sessionID = ""
-        static var userKey = 0
+        static var userKey = ""
         static var userName = ""
     }
     enum EndPoints {
-        static let base = "https://parse.udacity.com/parse/classes"
         
+        static let base = "https://parse.udacity.com/parse/classes"
         case allStudentLocation
         case logIn
         
         var stringValue: String {
             switch self {
             case .allStudentLocation:
-                return "https://parse.udacity.com/parse/classes/StudentLocation"
+                return EndPoints.base + "https://parse.udacity.com/parse/classes/StudentLocation"
             case .logIn:
                 return "https://onthemap-api.udacity.com/v1/session"
             }
@@ -41,32 +43,55 @@ class UdacityClient: NSObject {
         
     }
     
-    class func taskForGetRequest<ResponseType: Decodable>(url: URL, responseType: ResponseType.Type, completion: @escaping (ResponseType?, Error?) -> Void) -> URLSessionDataTask{
-        var request = URLRequest(url: url)
-        request.addValue(ParseApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
-        request.addValue(RESTAPIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+    //MARK: GET
+    class func taskForGETRequest<ResponseType: Decodable>(url: URL, responseType: ResponseType.Type, completion: @escaping (ResponseType?, Error?) -> Void) -> URLSessionDataTask {
+        var request = URLRequest(url: URL(string: "https://parse.udacity.com/parse/classes/StudentLocation")!)
+        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+        let session = URLSession.shared
+        let task = session.dataTask(with: url) { data, response, error in
             guard let data = data else {
-                completion(nil, error)
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
                 return
             }
-            
+            let decoder = JSONDecoder()
+            do {
+                let responseObject = try decoder.decode(ResponseType.self, from: data)
+                DispatchQueue.main.async {
+                    completion(responseObject, nil)
+                }
+            } catch {
+                do {
+                    DispatchQueue.main.async {
+                        completion(nil, error)
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(nil, error)
+                    }
+                }
+            }
         }
         task.resume()
         
         return task
     }
     
+    
     class func getStudentLocations(completion: @escaping ([StudentLocation], Error?)-> Void){
-        let task = taskForGetRequest(url: EndPoints.allStudentLocation.url, responseType: StudentLocation.self) { (response, error) in
+        let task = taskForGETRequest(url: EndPoints.allStudentLocation.url, responseType: StudentLocation.self) { (response, error) in
             if let response = response {
-
                 completion([response], nil)
             } else {
                 completion([], error)
             }
         }
     }
+    
+    
+    
     
     //MARK: POST Requests
     class func taskForPOSTRequest(url: URL, body: String, completion: @escaping (
@@ -80,19 +105,15 @@ class UdacityClient: NSObject {
         let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
             
             func sendError(_ error: String) {
-                //self.showActivityIndicator(false)
                 print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
                 completion(nil, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
             }
             
-            /* GUARD: Was there an error? */
             guard (error == nil) else {
                 sendError("There was an error with your request: \(error!.localizedDescription)")
                 return
             }
-            
-            /* GUARD: Did we get a successful 2XX response? */
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {
                 sendError("Request did not return a valid response.")
                 return
@@ -106,19 +127,13 @@ class UdacityClient: NSObject {
             default:
                 sendError("Your request returned a status code other than 2xx!")
             }
-            
-            /* GUARD: Was there any data returned? */
-            guard let data = data else {
+                guard let data = data else {
                 sendError("No data was returned by the request!")
                 return
             }
-
-            /* 5/6. Parse the data and use the data (happens in completion handler) */
             completion(data, nil)
-            
         }
         task.resume()
-        
         return task
     }
     
