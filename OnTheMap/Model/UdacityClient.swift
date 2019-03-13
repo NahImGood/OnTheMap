@@ -63,15 +63,10 @@ class UdacityClient: NSObject {
                     completion(responseObject, nil)
                 }
             } catch {
-                do {
-                    DispatchQueue.main.async {
-                        completion(nil, error)
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        completion(nil, error)
-                    }
+                DispatchQueue.main.async {
+                    completion(nil, error)
                 }
+                
             }
         }
         task.resume()
