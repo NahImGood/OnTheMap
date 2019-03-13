@@ -18,8 +18,7 @@ class LogInViewControler: UIViewController {
     
     //MARK: Actions
     @IBAction func loginButtonPressed(_ sender: UIButton) {
-        
-        
+
         print("login was selected")
         activityIndicator.startAnimating()
 
