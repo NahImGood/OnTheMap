@@ -53,7 +53,7 @@ class LogInViewControler: UIViewController {
                     self.usernameTextField.text = ""
                     self.passwordTextFields.text = ""
                 }
-                self.performSegue(withIdentifier: "showMap", sender: nil)
+                self.performSegue(withIdentifier: "logInSegue", sender: nil)
             } else {
                 self.performUIUpdatesOnMain {
                     self.showInfo(withTitle: "Login falied", withMessage: "\(error?.localizedDescription)")

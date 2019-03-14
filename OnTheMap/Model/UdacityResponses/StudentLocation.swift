@@ -9,17 +9,36 @@
 import Foundation
 
 struct StudentLocation: Codable {
-    let objectId: String
-    let uniqueKey: String
-    let firstName: String
-    let lastName: String
-    let mapString: String
-    let mediaURL: String
-    let latitude: Float
-    let longitude: Float
-    let createdAt: Date?
-    let updateAt: Date?
-    let ACL: String?
+    
+    let objectId: String?
+    let uniqueKey: String?
+    let firstName: String?
+    let lastName: String?
+    let mapString: String?
+    let mediaURL: String?
+    let latitude: Double?
+    let longitude: Double?
+    let createdAt: String?
+    let updatedAt: String?
+    
+    var locationLabel: String {
+        var name = ""
+        if let firstName = firstName {
+            name = firstName
+        }
+        if let lastName = lastName {
+            if name.isEmpty {
+                name = lastName
+            } else {
+                name += " \(lastName)"
+            }
+        }
+        if name.isEmpty {
+            name = "No name provided"
+        }
+        return name
+    }
+
     
 }
 
