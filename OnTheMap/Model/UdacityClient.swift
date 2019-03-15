@@ -63,12 +63,14 @@ class UdacityClient: NSObject {
             }
             let decoder = JSONDecoder()
             do {
-                
+
                 let responseObject = try decoder.decode(ResponseType.self, from: data)
+                print(responseObject)
                 DispatchQueue.main.async {
                     completion(responseObject, nil)
                 }
             } catch {
+                print("There was an Decoding: \(error)")
                 DispatchQueue.main.async {
                     completion(nil, error)
                 }
@@ -81,10 +83,10 @@ class UdacityClient: NSObject {
     }
     
     class func getStudentLocations(completion: @escaping ([StudentLocation], Error?)-> Void){
-        let task = taskForGETRequest(url: EndPoints.allStudentLocation.url, responseType: StudentLocation.self) { (response, error) in
+        let task = taskForGETRequest(url: EndPoints.allStudentLocation.url, responseType: SearchResults.self) { (response, error) in
             if let response = response {
                 print(response)
-                completion([response], nil)
+                completion(response.results, nil)
             } else {
                 print(error)
                 completion([], error)

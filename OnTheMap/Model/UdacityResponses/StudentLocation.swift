@@ -8,6 +8,10 @@
 
 import Foundation
 
+struct SearchResults: Codable {
+    let results: [StudentLocation]
+}
+
 struct StudentLocation: Codable {
     
     let objectId: String?
