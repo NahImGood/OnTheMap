@@ -273,7 +273,7 @@
                     <navigationItem key="navigationItem" id="csK-vF-cSw">
                         <barButtonItem key="rightBarButtonItem" style="plain" systemItem="cancel" id="3La-w6-pve">
                             <connections>
-                                <segue destination="hbH-bv-WlS" kind="show" id="aX3-Z7-aKR"/>
+                                <segue destination="RkI-Vc-N1D" kind="presentation" id="QQr-pA-D6o"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -296,10 +296,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Jbj-ul-1SC">
-                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                             </mapView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hwo-Ya-JWh">
-                                <rect key="frame" x="16" y="541" width="343" height="30"/>
+                                <rect key="frame" x="16" y="590" width="343" height="30"/>
                                 <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <state key="normal" title="Post Student Location">
                                     <color key="titleColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -400,6 +400,6 @@
     <inferredMetricsTieBreakers>
         <segue reference="yrv-G4-t3O"/>
         <segue reference="IXw-Up-hLU"/>
-        <segue reference="aX3-Z7-aKR"/>
+        <segue reference="QQr-pA-D6o"/>
     </inferredMetricsTieBreakers>
 </document>

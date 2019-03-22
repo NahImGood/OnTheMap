@@ -18,8 +18,6 @@ class LogInViewControler: UIViewController {
     
     //MARK: Actions
     @IBAction func loginButtonPressed(_ sender: UIButton) {
-        usernameTextField.text = "warnere225@gmail.com"
-        passwordTextFields.text = "Bl0buty436"
         
         print("login was selected")
         activityIndicator.startAnimating()
@@ -44,11 +42,6 @@ class LogInViewControler: UIViewController {
         let url = URL(string: "https://www.udacity.com/account/auth#!/signup")
         UIApplication.shared.open(url!, options: [:])
     }
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
     
     private func authenticateUserInfo(username: String, password: String){
         UdacityClient.logInUdacity(password: password, username: username) { (success, error) in
@@ -71,7 +64,6 @@ class LogInViewControler: UIViewController {
                 self.activityIndicator.stopAnimating()
             }
         }
-        
     }
 }
 

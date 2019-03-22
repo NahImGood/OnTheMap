@@ -20,8 +20,6 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         reload()
         pinTableView.delegate = self
         pinTableView.dataSource = self
-        
-        // Do any additional setup after loading the view.
     }
     
     // MARK: - Table view data source

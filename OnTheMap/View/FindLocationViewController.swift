@@ -27,6 +27,18 @@ class FindLocationViewController: UIViewController, UITextFieldDelegate {
         getCoordinate(addressString: locationTextField.text!, completionHandler: handleGetCoordinate(response:error:))
         }
     }
+    
+    func handleGetSingleStudentInfo(studentInfo:StudentInformation?, error:Error?) {
+        guard let studentInfo = studentInfo else {
+            print(error!)
+            return
+        }
+        UserDefaults.standard.set(studentInfo.lastName, forKey: "lastname")
+        UserDefaults.standard.set(studentInfo.firstName, forKey: "firstname")
+        print(studentInfo.lastName)
+        print(studentInfo.firstName)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         locationTextField.delegate = self

@@ -33,10 +33,12 @@ class PostLocationViewController: UIViewController {
 
     
     func setUserInfo(){
+
         let newLocation = NewLocation(uniqueKey: userInfo.object(forKey: "accountKey") as! String ,firstName:"Ya Boi", lastName:"Skinny P", mapString: location, mediaURL:mediaURL, latitude:newLat, longitude:newlong)
         
         UdacityClient.requestPostStudentInfo(postData: newLocation, completionHandler: handlePostLocationReponse(postLocationResponse:error:))
     }
+    
     
     func setMapAnnotation() {
 
@@ -53,14 +55,13 @@ class PostLocationViewController: UIViewController {
         print("New long is \(newlong)")
     }
     
+
     func handlePostLocationReponse(postLocationResponse:PostLocationResponse?, error:Error?) {
         
         guard let response = postLocationResponse else {
-            // If the submission fails to post the data to the server, then the user should see an alert with an error message describing the failure.
-            // TODO: need to fix the position for the Alert Dialog
             print(error!)
             let alertVC = UIAlertController(title: "Add Location", message: error?.localizedDescription, preferredStyle: .alert)
-            // eg. OK
+
             alertVC.addAction(UIAlertAction(title:"OK" , style: UIAlertAction.Style.default, handler: { (action) in
                 // dismiss the page
                 self.dismiss(animated: true, completion: nil)
@@ -69,8 +70,6 @@ class PostLocationViewController: UIViewController {
             present(alertVC, animated: true, completion: nil)
             return
         }
-        
-        // Likewise, if the submission succeeds, then the Information Posting View should be dismissed, returning the app to the Map and Table Tabbed View.
         print("Location is created at \(response.createdAt)")
         dismiss(animated: true, completion: nil)
         

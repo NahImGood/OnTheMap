@@ -33,6 +33,8 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         let tabItems = self.tabBarController?.tabBar.items
         reloadMapView()
         mapView.delegate = self
+
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -50,7 +52,6 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         }
         createMapAnnotation(studentInfos:studentInfos)
     }
-    
     
     func createMapAnnotation(studentInfos:[StudentInformation]) {
         for info in studentInfos {

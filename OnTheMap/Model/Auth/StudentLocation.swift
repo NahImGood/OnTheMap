@@ -13,7 +13,11 @@ struct AllStudentInfo : Codable {
     let results:[StudentInformation]
 }
 
-struct StudentInformation : Codable {
+struct SingleStudentInfo: Codable {
+    let results: StudentInformation
+}
+
+struct StudentInformation: Codable {
     let createdAt: String?
     let firstName: String?
     let lastName: String?
