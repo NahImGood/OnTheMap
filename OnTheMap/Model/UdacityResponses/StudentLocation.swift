@@ -8,41 +8,43 @@
 
 import Foundation
 
-struct SearchResults: Codable {
-    let results: [StudentLocation]
+struct AllStudentInfo : Codable {
+    
+    let results:[StudentInformation]
 }
 
-struct StudentLocation: Codable {
-    
-    let objectId: String?
-    let uniqueKey: String?
+struct StudentInformation : Codable {
+    let createdAt: String?
     let firstName: String?
     let lastName: String?
-    let mapString: String?
-    let mediaURL: String?
     let latitude: Double?
     let longitude: Double?
-    let createdAt: String?
+    let mapString: String?
+    let mediaURL: String?
+    let objectId: String?
+    let uniqueKey: String?
     let updatedAt: String?
     
-    var locationLabel: String {
+    var fullName: String {
         var name = ""
-        if let firstName = firstName {
-            name = firstName
-        }
-        if let lastName = lastName {
-            if name.isEmpty {
-                name = lastName
+        if firstName != nil {
+            name = "\(firstName!)"
+            if lastName != nil {
+                name = "\(firstName!) \(lastName!)"
             } else {
-                name += " \(lastName)"
+                name = "\(lastName!)"
             }
-        }
-        if name.isEmpty {
-            name = "No name provided"
+        } else {
+            name = "No Name Available"
         }
         return name
     }
-
     
+    var userUrl: String {
+        if mediaURL != nil {
+        return  "\(mediaURL!)"
+        }
+        return ""
+    }
 }
 

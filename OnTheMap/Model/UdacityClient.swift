@@ -28,6 +28,9 @@ class UdacityClient: NSObject {
         static let base = "https://parse.udacity.com/parse/classes"
         case allStudentLocation
         case logIn
+        case singleStudentLocation(uniqueKey:String)
+        case postStudentLocation
+        
         
         var stringValue: String {
             switch self {
@@ -35,6 +38,10 @@ class UdacityClient: NSObject {
                 return "https://parse.udacity.com/parse/classes/StudentLocation"
             case .logIn:
                 return "https://onthemap-api.udacity.com/v1/session"
+            case .singleStudentLocation(let uniqueKey):
+                return "https://parse.udacity.com/parse/classes/StudentLocation?where={uniqueKey:\(uniqueKey)}"
+            case .postStudentLocation:
+                return "https://parse.udacity.com/parse/classes/StudentLocation"
             }
         }
         var url: URL {
@@ -51,8 +58,10 @@ class UdacityClient: NSObject {
     //MARK: GET
     class func taskForGETRequest<ResponseType: Decodable>(url: URL, responseType: ResponseType.Type, completion: @escaping (ResponseType?, Error?) -> Void) -> URLSessionDataTask {
         var request = URLRequest(url: url)
+        request.httpMethod = "GET"
         request.addValue(ParseApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
         request.addValue(RESTAPIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         let session = URLSession.shared
         let task = session.dataTask(with: url) { data, response, error in
             guard let data = data else {
@@ -61,16 +70,16 @@ class UdacityClient: NSObject {
                 }
                 return
             }
+            print(data)
             let decoder = JSONDecoder()
             do {
-
                 let responseObject = try decoder.decode(ResponseType.self, from: data)
                 print(responseObject)
                 DispatchQueue.main.async {
                     completion(responseObject, nil)
                 }
             } catch {
-                print("There was an Decoding: \(error)")
+                print("There was an error Decoding: \(error)")
                 DispatchQueue.main.async {
                     completion(nil, error)
                 }
@@ -82,20 +91,92 @@ class UdacityClient: NSObject {
         return task
     }
     
-    class func getStudentLocations(completion: @escaping ([StudentLocation], Error?)-> Void){
-        let task = taskForGETRequest(url: EndPoints.allStudentLocation.url, responseType: SearchResults.self) { (response, error) in
+    
+    class func requestPostStudentInfo(postData:NewLocation, completionHandler: @escaping (PostLocationResponse?,Error?)->Void) {
+        let endpoint:URL = EndPoints.allStudentLocation.url
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.addValue(ParseApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue(RESTAPIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let jsonEncoder = JSONEncoder()
+        let encodedPostData = try! jsonEncoder.encode(postData)
+        request.httpBody = encodedPostData
+        print(encodedPostData)
+        let task = URLSession.shared.dataTask(with: request) {
+            (data, response, error) in
+            guard let data = data else {
+                print(error!)
+                DispatchQueue.main.async {
+                    completionHandler(nil,error)
+                }
+                return
+            }
+ 
+            let jsonDecoder = JSONDecoder()
+            do {
+                print(data.base64EncodedString())
+                let decodedData = try jsonDecoder.decode(PostLocationResponse.self, from: data)
+                print(decodedData)
+                DispatchQueue.main.async {
+                    completionHandler(decodedData,nil)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completionHandler(nil,error)
+                }
+            }
+        }
+        task.resume()
+    }
+    
+    
+    class func requestGetStudents(completionHandler: @escaping ([StudentInformation]?,Error?)->Void) {
+        // let endpoint:URL = URL(string:"https://parse.udacity.com/parse/classes/StudentLocation?limit=100&order=-updatedAt")!
+        let endpoint:URL = EndPoints.allStudentLocation.url
+        var request = URLRequest(url: endpoint)
+        request.addValue(ParseApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue(RESTAPIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+        let downloadTask = URLSession.shared.dataTask(with: request) {
+            (data, response, error) in
+            // guard there is data
+            guard let data = data else {
+                // TODO: CompleteHandler can return error
+                DispatchQueue.main.async {
+                    completionHandler(nil, error)
+                }
+                return
+            }
+            
+            let jsonDecoder = JSONDecoder()
+            do {
+                let result = try jsonDecoder.decode(AllStudentInfo.self, from: data)
+                DispatchQueue.main.async {
+                    completionHandler(result.results, nil)
+                }
+                
+            } catch {
+                DispatchQueue.main.async {
+                    completionHandler(nil,error)
+                }
+            }
+        }
+        
+        downloadTask.resume()
+    }
+    
+    class func getStudentLocations(completion: @escaping ([StudentInformation], Error?)-> Void){
+        _ = taskForGETRequest(url: EndPoints.allStudentLocation.url, responseType: AllStudentInfo.self) { (response, error) in
             if let response = response {
-                print(response)
+                print("response: \(response)")
                 completion(response.results, nil)
             } else {
-                print(error)
+                print("response: \(error)")
                 completion([], error)
             }
         }
     }
-    
-    
-    
     
     //MARK: POST Requests
     class func taskForPOSTRequest(url: URL, body: String, completion: @escaping (
@@ -148,6 +229,7 @@ class UdacityClient: NSObject {
         return task
     }
     
+    
     class func logInUdacity(password: String, username: String, completion: @escaping (Bool, Error?)->Void){
         let body = "{\"udacity\": {\"username\": \"\(username)\", \"password\": \"\(password)\"}}"
         _ = taskForPOSTRequest(url: EndPoints.logIn.url, body: body, completion: { (data, error) in
@@ -167,16 +249,19 @@ class UdacityClient: NSObject {
                         return
                     }
                     Auth.userKey = account.key
+                    print("AuthKey = \(account.key)")
+                    UserDefaults.standard.set(account.key, forKey: "accountKey")
+                    UserDefaults.standard.set(userSession.id, forKey: "UserSession")
                     Auth.userName = userSession.id
                     completion(true, nil)
                 } else {
                     completion(false, error)
-                    
                 }
             }
         })
         
     }
+    
     
     class func parseUserSession(data: Data?) -> (UserSession?, Error?) {
         var studensLocation: (userSession: UserSession?, error: Error?) = (nil, nil)
@@ -193,5 +278,6 @@ class UdacityClient: NSObject {
         }
         return studensLocation
     }
+
 
 }

@@ -18,7 +18,9 @@ class LogInViewControler: UIViewController {
     
     //MARK: Actions
     @IBAction func loginButtonPressed(_ sender: UIButton) {
-
+        usernameTextField.text = "warnere225@gmail.com"
+        passwordTextFields.text = "Bl0buty436"
+        
         print("login was selected")
         activityIndicator.startAnimating()
 
@@ -39,6 +41,8 @@ class LogInViewControler: UIViewController {
     }
     
     @IBAction func dontHaveAccountButtonPressed(_ sender: UIButton) {
+        let url = URL(string: "https://www.udacity.com/account/auth#!/signup")
+        UIApplication.shared.open(url!, options: [:])
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,6 +53,10 @@ class LogInViewControler: UIViewController {
     private func authenticateUserInfo(username: String, password: String){
         UdacityClient.logInUdacity(password: password, username: username) { (success, error) in
             if success {
+                print(username)
+                print(password)
+                UserDefaults.standard.set(username, forKey: "username")
+                UserDefaults.standard.set(password, forKey: "password")
                 self.performUIUpdatesOnMain {
                     self.usernameTextField.text = ""
                     self.passwordTextFields.text = ""
@@ -56,7 +64,7 @@ class LogInViewControler: UIViewController {
                 self.performSegue(withIdentifier: "logInSegue", sender: nil)
             } else {
                 self.performUIUpdatesOnMain {
-                    self.showInfo(withTitle: "Login falied", withMessage: "\(error?.localizedDescription)")
+                    self.showInfo(withTitle: "Login falied", withMessage: "Please Check Log In Info")
                 }
             }
             self.performUIUpdatesOnMain {

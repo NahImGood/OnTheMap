@@ -10,10 +10,7 @@ import Foundation
 
 struct StudentModel {
     
-    static var shared = StudentModel()
+    static var studentInformations:[StudentInformation] = []
     
-    private init() {}
-    
-    var studentLocation = [StudentLocation]()
-    var studentInformation = [StudentInformation]()
+    var shared: StudentInformation
 }

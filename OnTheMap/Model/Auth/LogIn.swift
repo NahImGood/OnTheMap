@@ -21,6 +21,34 @@ struct LogInRequest: Codable {
     }
 }
 
+struct Account: Codable {
+    let registered:Bool
+    let key:String
+}
+struct Session: Codable {
+    let id:String
+    let expiration:String
+}
+struct UserSession: Codable {
+    let account:Account?
+    let session:Session?
+}
+
 struct LogInSessionId: Codable{
     var sessionId: String
+}
+
+struct PostLocationResponse: Codable {
+    let createdAt: String
+    let objectId: String
+}
+
+struct NewLocation: Codable {
+    var uniqueKey:String
+    var firstName:String?
+    var lastName:String?
+    var mapString:String
+    var mediaURL:String
+    var latitude:Double
+    var longitude:Double
 }

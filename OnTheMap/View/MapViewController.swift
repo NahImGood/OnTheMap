@@ -12,36 +12,93 @@ import MapKit
 class MapViewController: UIViewController, MKMapViewDelegate  {
     
     //MARK: Outlets
+    
     @IBOutlet weak var mapView: MKMapView!
+    var sessionID:String = ""
+    var mapAnnotations = [MKAnnotation]()
+
+    //MARK: Actions
+    @IBAction func refreshButtonPressed(_ sender: UIBarButtonItem) {
+        reloadMapView()
+    }
+    @IBAction func addPinButtonPressed(_ sender: UIBarButtonItem) {
+        performSegue(withIdentifier: "addLocation", sender: nil)
+    }
+    
+    var studentInfos:[StudentInformation] = [StudentInformation]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        UdacityClient.getStudentLocations{ (StudentLocation, error) in
-            print("STUDENT LOCATINONS")
-            print(StudentLocation)
-            StudentModel.shared.studentLocation = StudentLocation
-        }
+        navigationItem.title = "On The Map"
+        let tabItems = self.tabBarController?.tabBar.items
+        reloadMapView()
         mapView.delegate = self
-        // Do any additional setup after loading the view.
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        reloadMapView()
     }
     
     @objc func reloadMapView(){
-        
-        //showStudentsInformation(StudentModel.shared.studentLocation)
+        UdacityClient.requestGetStudents(completionHandler: handleGetStudentInfos(studentInfos:error:))
     }
 
-    private func showStudentsInformation(_ studentsInformation: [StudentInformation]) {
-        mapView.removeAnnotations(mapView.annotations)
-        for info in studentsInformation where info.latitude != 0 && info.longitude != 0 {
-            let annotation = MKPointAnnotation()
-            //annotation.title = info.labelName
-            //annotation.subtitle = info.mediaURL
-            annotation.coordinate = CLLocationCoordinate2DMake(info.latitude, info.longitude)
-            mapView.addAnnotation(annotation)
+    func handleGetStudentInfos(studentInfos:[StudentInformation]?, error:Error?) {
+        guard let studentInfos = studentInfos else {
+            print(error!)
+            return
         }
-        mapView.showAnnotations(mapView.annotations, animated: true)
+        createMapAnnotation(studentInfos:studentInfos)
     }
-
+    
+    
+    func createMapAnnotation(studentInfos:[StudentInformation]) {
+        for info in studentInfos {
+            var title = info.fullName
+            
+            let lat = CLLocationDegrees(info.latitude ?? 0)
+            let long = CLLocationDegrees(info.longitude ?? 0)
+            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+            let mediaURL = info.userUrl
+            
+            let annotation = MKPointAnnotation()
+            annotation.title = title
+            annotation.coordinate = coordinate
+            annotation.subtitle = mediaURL
+            mapAnnotations.append(annotation)
+        }
+        
+        self.mapView.addAnnotations(mapAnnotations)
+    }
+    
+    // each pin's rendering
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        let annotationId = "pin"
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: annotationId) as? MKPinAnnotationView
+        
+        if pinView == nil {
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: annotationId)
+            pinView?.canShowCallout = true
+            pinView?.pinTintColor = .red
+            pinView?.rightCalloutAccessoryView = UIButton(type:.detailDisclosure)
+        } else {
+            pinView?.annotation = annotation
+        }
+        return pinView
+    }
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        if (control == view.rightCalloutAccessoryView) {
+            let app = UIApplication.shared
+            if let url = view.annotation?.subtitle! {
+                guard url != "Enter a Link To Share", !url.isEmpty else {
+                    print("No Valid URL!")
+                    return
+                }
+                app.open(URL(string: url)!, options: [:], completionHandler: nil)
+            }
+        }
+    }
 
     
 }
