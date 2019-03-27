@@ -28,16 +28,6 @@ class FindLocationViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    func handleGetSingleStudentInfo(studentInfo:StudentInformation?, error:Error?) {
-        guard let studentInfo = studentInfo else {
-            print(error!)
-            return
-        }
-        UserDefaults.standard.set(studentInfo.lastName, forKey: "lastname")
-        UserDefaults.standard.set(studentInfo.firstName, forKey: "firstname")
-        print(studentInfo.lastName)
-        print(studentInfo.firstName)
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,10 +48,10 @@ class FindLocationViewController: UIViewController, UITextFieldDelegate {
                     return
                 }
             }
-            
             completionHandler(kCLLocationCoordinate2DInvalid, error as NSError?)
         }
     }
+    
     
     func handleGetCoordinate(response: CLLocationCoordinate2D, error: NSError? ){
         if response.latitude == -180 || response.longitude == -180{
@@ -93,7 +83,9 @@ class FindLocationViewController: UIViewController, UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ scoreText: UITextField) -> Bool {
+        DispatchQueue.main.async {
         self.view.endEditing(true)
+        }
         return true
     }
 

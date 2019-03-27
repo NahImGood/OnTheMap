@@ -30,6 +30,7 @@ class UdacityClient: NSObject {
         case logIn
         case singleStudentLocation
         case postStudentLocation
+        case delete
         
         
         var stringValue: String {
@@ -39,11 +40,14 @@ class UdacityClient: NSObject {
             case .logIn:
                 return "https://onthemap-api.udacity.com/v1/session"
             case .singleStudentLocation:
-                return "https://parse.udacity.com/parse/classes/StudentLocation?where={uniqueKey:\(Auth.userKey)}"
+                return "https://onthemap-api.udacity.com/v1/users/\(Auth.userKey)"
             case .postStudentLocation:
                 return "https://parse.udacity.com/parse/classes/StudentLocation"
+            case .delete:
+                return "https://onthemap-api.udacity.com/v1/session"
             }
         }
+        
         var url: URL {
             return URL(string: stringValue)!
         }
@@ -122,12 +126,15 @@ class UdacityClient: NSObject {
         downloadTask.resume()
     }
     
-    class func requestSignedInUserInfo(completionHandler: @escaping (StudentInformation?,Error?)->Void) {
+    class func requestSignedInUserInfo(completionHandler: @escaping (StudentInfo?,Error?)->Void) {
         let url = EndPoints.singleStudentLocation.url
         print(url)
         var request = URLRequest(url: url)
         request.addValue(ParseApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
         request.addValue(RESTAPIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+        request.addValue(Auth.userKey, forHTTPHeaderField: "User-Key")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         let downloadTask = URLSession.shared.dataTask(with: request) {
             (data, response, error) in
             // guard there is data
@@ -138,10 +145,11 @@ class UdacityClient: NSObject {
                 }
                 return
             }
-            
+            let range = Range(5..<data.count)
+            let newData = data.subdata(in: range)
             let jsonDecoder = JSONDecoder()
             do {
-                let result = try jsonDecoder.decode(StudentInformation.self, from: data)
+                let result = try jsonDecoder.decode(StudentInfo.self, from: newData)
                 DispatchQueue.main.async {
                     completionHandler(result, nil)
                 }
@@ -236,6 +244,42 @@ class UdacityClient: NSObject {
                 }
             }
         })
+    }
+    
+    class func taskForDelete(url: URL, completion: @escaping (Session?, Error?)-> Void){
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        var xsrfCookie: HTTPCookie? = nil
+        let sharedCookieStorage = HTTPCookieStorage.shared
+        for cookie in sharedCookieStorage.cookies! {
+            if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie }
+        }
+        if let xsrfCookie = xsrfCookie {
+            request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
+        }
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard let data = data else {
+                print("Error In Delete: \(error)")
+                completion(nil, error)
+                return
+            }
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                print("Your request returned a status code other than 2xx!")
+                return
+            }
+        }
+        task.resume()
+    }
+    
+    class func deleteSession(url: URL, completion: @escaping(Session?, Error?)->Void){
+        let url = EndPoints.delete.url
+        let task = taskForDelete(url: url) { (data, error) in
+            guard let data = data else {
+                completion(nil, error)
+                return
+            }
+            print("Delete Block")
+        }
     }
     
     

@@ -30,10 +30,9 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "On The Map"
-        let tabItems = self.tabBarController?.tabBar.items
+        let _ = self.tabBarController?.tabBar.items
         reloadMapView()
         mapView.delegate = self
-
         
     }
     
@@ -42,10 +41,11 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     }
     
     @objc func reloadMapView(){
-        UdacityClient.requestGetStudents(completionHandler: handleGetStudentInfos(studentInfos:error:))
+        UdacityClient.requestSignedInUserInfo(completionHandler: handleGetSingleStudentInfo(studentInfo:error:))
+        UdacityClient.requestGetStudents(completionHandler: handleGetStudentInfo(studentInfos:error:))
     }
 
-    func handleGetStudentInfos(studentInfos:[StudentInformation]?, error:Error?) {
+    func handleGetStudentInfo(studentInfos:[StudentInformation]?, error:Error?) {
         guard let studentInfos = studentInfos else {
             print(error!)
             return
@@ -53,9 +53,17 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         createMapAnnotation(studentInfos:studentInfos)
     }
     
+    func handleGetSingleStudentInfo(studentInfo:StudentInfo?, error:Error?) {
+        guard let studentInfo = studentInfo else {
+            print(error!)
+            return
+        }
+        UserDefaults.standard.set(studentInfo.nickname, forKey: "nickname")
+    }
+    
     func createMapAnnotation(studentInfos:[StudentInformation]) {
         for info in studentInfos {
-            var title = info.fullName
+            let title = info.fullName
             
             let lat = CLLocationDegrees(info.latitude ?? 0)
             let long = CLLocationDegrees(info.longitude ?? 0)
@@ -92,8 +100,8 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         if (control == view.rightCalloutAccessoryView) {
             let app = UIApplication.shared
             if let url = view.annotation?.subtitle! {
-                guard url != "Enter a Link To Share", !url.isEmpty else {
-                    print("No Valid URL!")
+                guard !url.isEmpty else {
+                    showInfo(withMessage: "No Valid URl")
                     return
                 }
                 app.open(URL(string: url)!, options: [:], completionHandler: nil)

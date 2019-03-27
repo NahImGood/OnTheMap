@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LogInViewControler: UIViewController {
+class LogInViewControler: UIViewController, UITextFieldDelegate {
 
     //MARK: Outlets
     @IBOutlet weak var usernameTextField: UITextField!
@@ -18,8 +18,6 @@ class LogInViewControler: UIViewController {
     
     //MARK: Actions
     @IBAction func loginButtonPressed(_ sender: UIButton) {
-        
-        print("login was selected")
         activityIndicator.startAnimating()
 
         guard let email = usernameTextField.text, !email.isEmpty else {
@@ -39,8 +37,10 @@ class LogInViewControler: UIViewController {
     }
     
     @IBAction func dontHaveAccountButtonPressed(_ sender: UIButton) {
+        self.performUIUpdatesOnMain {
         let url = URL(string: "https://www.udacity.com/account/auth#!/signup")
         UIApplication.shared.open(url!, options: [:])
+        }
     }
     
     private func authenticateUserInfo(username: String, password: String){
@@ -64,6 +64,18 @@ class LogInViewControler: UIViewController {
                 self.activityIndicator.stopAnimating()
             }
         }
+    }
+    
+    override func viewDidLoad() {
+        usernameTextField.delegate = self
+        passwordTextFields.delegate = self
+    }
+    
+    func textFieldShouldReturn(_ scoreText: UITextField) -> Bool {
+        DispatchQueue.main.async {
+            self.view.endEditing(true)
+        }
+        return true
     }
 }
 

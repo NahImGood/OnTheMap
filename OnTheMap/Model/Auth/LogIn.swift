@@ -29,6 +29,7 @@ struct Session: Codable {
     let id:String
     let expiration:String
 }
+
 struct UserSession: Codable {
     let account:Account?
     let session:Session?
