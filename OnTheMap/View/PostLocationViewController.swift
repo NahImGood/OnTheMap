@@ -36,14 +36,10 @@ class PostLocationViewController: UIViewController {
     
     func setUserInfo(){
         let newLocation = NewLocation(uniqueKey: UserDefaults.standard.object(forKey: "accountKey") as! String ,firstName: "", lastName: nickName, mapString: location, mediaURL:mediaURL, latitude:newLat, longitude:newlong)
-        UdacityClient.requestPostStudentInfo(postData: newLocation, completionHandler: handlePostLocationReponse(postLocationResponse:error:))
+        ParseClient.requestPostStudentInfo(postData: newLocation, completionHandler: handlePostLocationReponse(postLocationResponse:error:))
     }
     
-
-    
-    
     func setMapAnnotation() {
-
         let lat = CLLocationDegrees(newLat)
         let long = CLLocationDegrees(newlong)
         let cordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
@@ -56,7 +52,7 @@ class PostLocationViewController: UIViewController {
 
     }
     
-
+ 
     func handlePostLocationReponse(postLocationResponse:PostLocationResponse?, error:Error?) {
         
         guard let response = postLocationResponse else {
@@ -73,8 +69,5 @@ class PostLocationViewController: UIViewController {
         dismiss(animated: true, completion: nil)
         
     }
-    
-
-    
 
 }

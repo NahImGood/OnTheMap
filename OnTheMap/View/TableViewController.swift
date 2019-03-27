@@ -12,6 +12,9 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
     //MARK: Outlets
     @IBOutlet weak var pinTableView: UITableView!
+    @IBAction func reloadTableViewButton(_ sender: UIBarButtonItem) {
+        reload()
+    }
     
     var studentInfos: [StudentInformation] = [StudentInformation]()
     
@@ -47,7 +50,7 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     
     @objc func reload() {
-        UdacityClient.requestGetStudents(completionHandler: handleGetStudentInfos(infos:error:))
+        ParseClient.requestGetStudents(completionHandler: handleGetStudentInfos(infos:error:))
         
     }
     

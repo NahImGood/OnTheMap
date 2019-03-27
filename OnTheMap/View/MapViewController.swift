@@ -42,7 +42,7 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     
     @objc func reloadMapView(){
         UdacityClient.requestSignedInUserInfo(completionHandler: handleGetSingleStudentInfo(studentInfo:error:))
-        UdacityClient.requestGetStudents(completionHandler: handleGetStudentInfo(studentInfos:error:))
+        ParseClient.requestGetStudents(completionHandler: handleGetStudentInfo(studentInfos:error:))
     }
 
     func handleGetStudentInfo(studentInfos:[StudentInformation]?, error:Error?) {
