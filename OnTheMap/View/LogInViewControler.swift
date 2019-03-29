@@ -53,8 +53,8 @@ class LogInViewControler: UIViewController, UITextFieldDelegate {
                 self.performUIUpdatesOnMain {
                     self.usernameTextField.text = ""
                     self.passwordTextFields.text = ""
+                    self.performSegue(withIdentifier: "logInSegue", sender: nil)
                 }
-                self.performSegue(withIdentifier: "logInSegue", sender: nil)
             } else {
                 self.performUIUpdatesOnMain {
                     self.showInfo(withTitle: "Login falied", withMessage: "Please Check Log In Info")
@@ -79,20 +79,3 @@ class LogInViewControler: UIViewController, UITextFieldDelegate {
     }
 }
 
-extension UIViewController {
-    func showInfo(withTitle: String = "Info", withMessage: String, action: (() -> Void)? = nil) {
-        performUIUpdatesOnMain {
-            let ac = UIAlertController(title: withTitle, message: withMessage, preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .default, handler: {(alertAction) in
-                action?()
-            }))
-            self.present(ac, animated: true)
-        }
-    }
-    
-    func performUIUpdatesOnMain(_ updates: @escaping () -> Void) {
-        DispatchQueue.main.async {
-            updates()
-        }
-    }
-}

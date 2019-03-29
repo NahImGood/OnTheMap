@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8474D5B4224BECE100533F0F /* ParseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8474D5B3224BECE100533F0F /* ParseClient.swift */; };
+		8474D5B7224D4E5800533F0F /* ViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8474D5B6224D4E5800533F0F /* ViewControllerExtension.swift */; };
 		8495D7CE2241BD5C00BE2223 /* FindLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8495D7CD2241BD5C00BE2223 /* FindLocationViewController.swift */; };
 		8495D7D222430A8C00BE2223 /* PostLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8495D7D122430A8C00BE2223 /* PostLocationViewController.swift */; };
 		84C2B1E622383518001CCFB5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2B1E522383518001CCFB5 /* AppDelegate.swift */; };
@@ -25,6 +26,7 @@
 
 /* Begin PBXFileReference section */
 		8474D5B3224BECE100533F0F /* ParseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseClient.swift; sourceTree = "<group>"; };
+		8474D5B6224D4E5800533F0F /* ViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerExtension.swift; sourceTree = "<group>"; };
 		8495D7CD2241BD5C00BE2223 /* FindLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindLocationViewController.swift; sourceTree = "<group>"; };
 		8495D7D122430A8C00BE2223 /* PostLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostLocationViewController.swift; sourceTree = "<group>"; };
 		84C2B1E222383518001CCFB5 /* OnTheMap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OnTheMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -53,6 +55,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8474D5B5224D4E3B00533F0F /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8474D5B6224D4E5800533F0F /* ViewControllerExtension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		84C2B1D922383518001CCFB5 = {
 			isa = PBXGroup;
 			children = (
@@ -74,7 +84,6 @@
 			children = (
 				84C2B1E522383518001CCFB5 /* AppDelegate.swift */,
 				84C2B1F42238351A001CCFB5 /* Info.plist */,
-				84C2B1FC22383552001CCFB5 /* Controller */,
 				84C2B1FB2238354D001CCFB5 /* View */,
 				84C2B1FA22383546001CCFB5 /* Model */,
 				84C2B1FD22383566001CCFB5 /* Assets */,
@@ -96,6 +105,7 @@
 		84C2B1FB2238354D001CCFB5 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				8474D5B5224D4E3B00533F0F /* Extensions */,
 				84C2B1FF22383608001CCFB5 /* LogInViewControler.swift */,
 				84C2B20B22387D2F001CCFB5 /* MapViewController.swift */,
 				84C2B21722398C10001CCFB5 /* TableViewController.swift */,
@@ -103,13 +113,6 @@
 				8495D7CD2241BD5C00BE2223 /* FindLocationViewController.swift */,
 			);
 			path = View;
-			sourceTree = "<group>";
-		};
-		84C2B1FC22383552001CCFB5 /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Controller;
 			sourceTree = "<group>";
 		};
 		84C2B1FD22383566001CCFB5 /* Assets */ = {
@@ -218,6 +221,7 @@
 				84C2B20022383608001CCFB5 /* LogInViewControler.swift in Sources */,
 				84C2B20522383930001CCFB5 /* StudentLocation.swift in Sources */,
 				84C2B1E622383518001CCFB5 /* AppDelegate.swift in Sources */,
+				8474D5B7224D4E5800533F0F /* ViewControllerExtension.swift in Sources */,
 				84C2B20C22387D2F001CCFB5 /* MapViewController.swift in Sources */,
 				8495D7D222430A8C00BE2223 /* PostLocationViewController.swift in Sources */,
 				8474D5B4224BECE100533F0F /* ParseClient.swift in Sources */,

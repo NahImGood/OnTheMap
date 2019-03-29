@@ -22,9 +22,18 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         reloadMapView()
     }
     @IBAction func addPinButtonPressed(_ sender: UIBarButtonItem) {
-        performSegue(withIdentifier: "addLocation", sender: nil)
+        DispatchQueue.main.async {
+            self.performSegue(withIdentifier: "addLocation", sender: nil)
+        }
     }
     
+    @IBAction func logOut(_ sender: UIBarButtonItem) {
+        UdacityClient.taskForDelete {
+            DispatchQueue.main.async {
+                self.performSegue(withIdentifier: "logOutTrue", sender: nil)
+            }
+        }
+    }
     var studentInfos:[StudentInformation] = [StudentInformation]()
     
     override func viewDidLoad() {
@@ -42,11 +51,22 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     
     @objc func reloadMapView(){
         UdacityClient.requestSignedInUserInfo(completionHandler: handleGetSingleStudentInfo(studentInfo:error:))
-        ParseClient.requestGetStudents(completionHandler: handleGetStudentInfo(studentInfos:error:))
+        ParseClient.requestLimitedStudents(completion: handleGetStudentInfo(studentInfos:error:))
+    }
+    
+    func handleLogOut(response: Session? , error: Error?){
+        guard let response = response else {
+            showInfo(withMessage: "Unable To Log Out")
+            return
+        }
+        DispatchQueue.main.async {
+            self.performSegue(withIdentifier: "logOutAccapted", sender: nil)
+        }
     }
 
     func handleGetStudentInfo(studentInfos:[StudentInformation]?, error:Error?) {
         guard let studentInfos = studentInfos else {
+            showInfo(withMessage: "Unable to Download Student Locations")
             print(error!)
             return
         }
@@ -55,6 +75,7 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     
     func handleGetSingleStudentInfo(studentInfo:StudentInfo?, error:Error?) {
         guard let studentInfo = studentInfo else {
+            showInfo(withMessage: "Unable to Download Your Student Info")
             print(error!)
             return
         }

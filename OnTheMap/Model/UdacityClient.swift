@@ -162,7 +162,7 @@ class UdacityClient: NSObject {
                     print("AuthKey = \(Auth.userKey)")
                     UserDefaults.standard.set(account.key, forKey: "accountKey")
                     UserDefaults.standard.set(userSession.id, forKey: "UserSession")
-                    Auth.userName = userSession.id
+                    Auth.sessionID = userSession.id
                     completion(true, nil)
                 } else {
                     completion(false, error)
@@ -171,9 +171,13 @@ class UdacityClient: NSObject {
         })
     }
     
-    class func taskForDelete(url: URL, completion: @escaping (Session?, Error?)-> Void){
-        var request = URLRequest(url: url)
+    class func taskForDelete(completion: @escaping ()-> Void){
+        print("Top of task")
+        var request = URLRequest(url: EndPoints.logIn.url)
         request.httpMethod = "DELETE"
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
         var xsrfCookie: HTTPCookie? = nil
         let sharedCookieStorage = HTTPCookieStorage.shared
         for cookie in sharedCookieStorage.cookies! {
@@ -182,29 +186,15 @@ class UdacityClient: NSObject {
         if let xsrfCookie = xsrfCookie {
             request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
         }
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard let data = data else {
-                print("Error In Delete: \(error)")
-                completion(nil, error)
-                return
-            }
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                print("Your request returned a status code other than 2xx!")
-                return
-            }
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            
+            print("enter task for delete")
+            let range = 5..<data!.count
+            let newData = data?.subdata(in: range)
+            Auth.sessionID = ""
+            Auth.userKey = ""
         }
         task.resume()
-    }
-    
-    class func deleteSession(url: URL, completion: @escaping(Session?, Error?)->Void){
-        let url = EndPoints.delete.url
-        let task = taskForDelete(url: url) { (data, error) in
-            guard let data = data else {
-                completion(nil, error)
-                return
-            }
-            print("Delete Block")
-        }
     }
     
     

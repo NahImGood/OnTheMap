@@ -16,6 +16,14 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         reload()
     }
     
+    @IBAction func logOut(_ sender: UIBarButtonItem) {
+        UdacityClient.taskForDelete {
+            DispatchQueue.main.async {
+                self.performSegue(withIdentifier: "logOutTrue", sender: nil)
+            }
+        }
+    }
+
     var studentInfos: [StudentInformation] = [StudentInformation]()
     
     override func viewDidLoad() {
@@ -23,6 +31,7 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         reload()
         pinTableView.delegate = self
         pinTableView.dataSource = self
+        navigationItem.title = "On The Map"
     }
     
     // MARK: - Table view data source
@@ -50,7 +59,7 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     
     @objc func reload() {
-        ParseClient.requestGetStudents(completionHandler: handleGetStudentInfos(infos:error:))
+        ParseClient.requestOrderedLocations(completion: handleGetStudentInfos(infos:error:))
         
     }
     
@@ -64,8 +73,19 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }
     }
     
+    func handleLogOut(response: Session? , error: Error?){
+        guard let response = response else {
+            showInfo(withMessage: "Unable To Log Out")
+            return
+        }
+        DispatchQueue.main.async {
+            self.performSegue(withIdentifier: "logOutTrue", sender: nil)
+        }
+    }
+
     func handleGetStudentInfos(infos:[StudentInformation]?, error:Error?) {
         guard let infos = infos else {
+            showInfo(withMessage: "Unable to Download Student Locations")
             print(error!)
             return
         }

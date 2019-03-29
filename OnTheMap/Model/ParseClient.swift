@@ -21,15 +21,17 @@ class ParseClient {
         
         case allStudentLocation
         case singleStudentLocation
-        
+        case orderedStudentsLocation
         
         var stringValue: String {
             switch self {
             case .allStudentLocation:
-            return "https://parse.udacity.com/parse/classes/StudentLocation"
+            return "https://parse.udacity.com/parse/classes/StudentLocation?limit=100"
             case .singleStudentLocation:
-                return ""
-
+                return "https://parse.udacity.com/parse/classes/StudentLocation"
+            case .orderedStudentsLocation:
+                return "https://parse.udacity.com/parse/classes/StudentLocation?order=-updatedAt"
+            
             }
         }
     
@@ -39,9 +41,8 @@ class ParseClient {
     }
     
     
-    class func requestGetStudents(completionHandler: @escaping ([StudentInformation]?,Error?)->Void) {
-        let endpoint:URL = EndPoints.allStudentLocation.url
-        var request = URLRequest(url: endpoint)
+    class func requestGetStudents(url: URL, completionHandler: @escaping ([StudentInformation]?,Error?)->Void) {
+        var request = URLRequest(url: url)
         request.addValue(ParseApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
         request.addValue(RESTAPIKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
         let downloadTask = URLSession.shared.dataTask(with: request) {
@@ -72,9 +73,31 @@ class ParseClient {
         downloadTask.resume()
     }
     
+    class func requestOrderedLocations(completion: @escaping([StudentInformation]?, Error?)->Void){
+        requestGetStudents(url: EndPoints.orderedStudentsLocation.url) { (response, error) in
+            guard let response = response else {
+                print("RequestOrderedLocations: Failed")
+                completion(nil, error)
+                return
+            }
+            completion(response,nil)
+        }
+    }
+    
+    class func requestLimitedStudents(completion: @escaping ([StudentInformation]?, Error?)-> Void){
+        requestGetStudents(url: EndPoints.allStudentLocation.url) { (response, error) in
+            guard let response = response else {
+                print("requestLimitedStudents: Failed")
+                completion(nil, error)
+                return
+            }
+            completion(response,nil)
+        }
+    }
+    
     
     class func requestPostStudentInfo(postData:NewLocation, completionHandler: @escaping (PostLocationResponse?,Error?)->Void) {
-        let endpoint:URL = EndPoints.allStudentLocation.url
+        let endpoint:URL = EndPoints.singleStudentLocation.url
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.addValue(ParseApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
