@@ -125,14 +125,9 @@
                         <viewLayoutGuide key="safeArea" id="lw9-eV-nBv"/>
                     </view>
                     <navigationItem key="navigationItem" id="qz0-fK-Qoz">
-                        <barButtonItem key="leftBarButtonItem" width="30" style="plain" id="Bbu-zr-ueo">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="uUX-FV-oih">
-                                <rect key="frame" x="16" y="7" width="83" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Log Out"/>
-                            </button>
+                        <barButtonItem key="leftBarButtonItem" title="Log Out" id="xvX-zj-2QN">
                             <connections>
-                                <action selector="logOut:" destination="V1P-p6-19S" id="sUu-Q7-k8R"/>
+                                <action selector="logOut:" destination="V1P-p6-19S" id="GE2-dt-5Fn"/>
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
@@ -179,14 +174,9 @@
                         <viewLayoutGuide key="safeArea" id="zUa-hc-tkV"/>
                     </view>
                     <navigationItem key="navigationItem" id="AVI-q4-Ebe">
-                        <barButtonItem key="leftBarButtonItem" style="plain" id="q3r-F7-lsX">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="0AF-d9-t5B">
-                                <rect key="frame" x="16" y="7" width="83" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Log Out"/>
-                            </button>
+                        <barButtonItem key="leftBarButtonItem" title="Log Out" id="9Ik-QJ-nEm">
                             <connections>
-                                <action selector="logOut:" destination="hbH-bv-WlS" id="ueT-lq-vqM"/>
+                                <action selector="logOut:" destination="hbH-bv-WlS" id="xdO-cE-maj"/>
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
@@ -428,9 +418,9 @@
         <image name="logo-u" width="62" height="62"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="yrv-G4-t3O"/>
+        <segue reference="FeB-Vt-rle"/>
         <segue reference="IXw-Up-hLU"/>
         <segue reference="zQL-oc-x0J"/>
-        <segue reference="QCX-9W-Csl"/>
+        <segue reference="Kbh-6c-zW1"/>
     </inferredMetricsTieBreakers>
 </document>

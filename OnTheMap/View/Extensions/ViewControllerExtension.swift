@@ -25,4 +25,14 @@ extension UIViewController {
             updates()
         }
     }
+    
+    func handleLogOut(response: Session? , error: Error?){
+        guard let response = response else {
+            showInfo(withMessage: "Unable To Log Out")
+            return
+        }
+        DispatchQueue.main.async {
+            self.performSegue(withIdentifier: "logOutAccapted", sender: nil)
+        }
+    }
 }

@@ -28,11 +28,13 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     }
     
     @IBAction func logOut(_ sender: UIBarButtonItem) {
+        print("log out pressed")
         UdacityClient.taskForDelete {
-            DispatchQueue.main.async {
-                self.performSegue(withIdentifier: "logOutTrue", sender: nil)
-            }
         }
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+        }
+
     }
     var studentInfos:[StudentInformation] = [StudentInformation]()
     
@@ -52,16 +54,6 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     @objc func reloadMapView(){
         UdacityClient.requestSignedInUserInfo(completionHandler: handleGetSingleStudentInfo(studentInfo:error:))
         ParseClient.requestLimitedStudents(completion: handleGetStudentInfo(studentInfos:error:))
-    }
-    
-    func handleLogOut(response: Session? , error: Error?){
-        guard let response = response else {
-            showInfo(withMessage: "Unable To Log Out")
-            return
-        }
-        DispatchQueue.main.async {
-            self.performSegue(withIdentifier: "logOutAccapted", sender: nil)
-        }
     }
 
     func handleGetStudentInfo(studentInfos:[StudentInformation]?, error:Error?) {

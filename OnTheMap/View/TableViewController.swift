@@ -17,10 +17,11 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     @IBAction func logOut(_ sender: UIBarButtonItem) {
+        print("log out pressed")
         UdacityClient.taskForDelete {
-            DispatchQueue.main.async {
-                self.performSegue(withIdentifier: "logOutTrue", sender: nil)
-            }
+        }
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
         }
     }
 
@@ -70,16 +71,6 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
             UIApplication.shared.open(temp!, options: [:])
         }else {
             showAlert(title: "Invalid URL", message: "Appears to be an invalid URL", titleResponse: "Ok")
-        }
-    }
-    
-    func handleLogOut(response: Session? , error: Error?){
-        guard let response = response else {
-            showInfo(withMessage: "Unable To Log Out")
-            return
-        }
-        DispatchQueue.main.async {
-            self.performSegue(withIdentifier: "logOutTrue", sender: nil)
         }
     }
 

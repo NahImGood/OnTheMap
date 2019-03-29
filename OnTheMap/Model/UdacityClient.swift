@@ -172,7 +172,6 @@ class UdacityClient: NSObject {
     }
     
     class func taskForDelete(completion: @escaping ()-> Void){
-        print("Top of task")
         var request = URLRequest(url: EndPoints.logIn.url)
         request.httpMethod = "DELETE"
         request.addValue("application/json", forHTTPHeaderField: "Accept")
@@ -187,7 +186,6 @@ class UdacityClient: NSObject {
             request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
         }
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            
             print("enter task for delete")
             let range = 5..<data!.count
             let newData = data?.subdata(in: range)
