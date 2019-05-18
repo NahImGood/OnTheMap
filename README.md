@@ -36,3 +36,12 @@ The app has four view controller scenes:
 
  - Xcode 10
  - Swift 4.0
+ 
+<p float="center">
+<img src="https://user-images.githubusercontent.com/26684339/57973948-6edac680-7965-11e9-97ef-6411ea03eb89.png" width="250">
+<img src="https://user-images.githubusercontent.com/26684339/57973949-6edac680-7965-11e9-938a-ffda4371b4c5.png" width="250">
+<img src="https://user-images.githubusercontent.com/26684339/57973950-6f735d00-7965-11e9-85b6-75c484d55d6b.png" width="250">
+<img src="https://user-images.githubusercontent.com/26684339/57973951-6f735d00-7965-11e9-92c3-b320d619c8d8.png" width="250">
+<img src="https://user-images.githubusercontent.com/26684339/57973952-6f735d00-7965-11e9-995c-f098551b94cf.png" width="250">
+<img src="https://user-images.githubusercontent.com/26684339/57973953-6f735d00-7965-11e9-8adb-cf6d8f1b7a99.png" width="250">
+</p>
