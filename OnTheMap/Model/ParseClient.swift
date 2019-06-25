@@ -15,7 +15,6 @@ class ParseClient {
     //REST API Key
     static let RESTAPIKey = "QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY"
     
-
     enum EndPoints {
         static let base = "https://parse.udacity.com/parse/classes"
         
@@ -26,12 +25,11 @@ class ParseClient {
         var stringValue: String {
             switch self {
             case .allStudentLocation:
-            return "https://parse.udacity.com/parse/classes/StudentLocation?limit=100"
+            return  EndPoints.base + "/StudentLocation?limit=100"
             case .singleStudentLocation:
-                return "https://parse.udacity.com/parse/classes/StudentLocation"
+                return EndPoints.base + "/StudentLocation"
             case .orderedStudentsLocation:
-                return "https://parse.udacity.com/parse/classes/StudentLocation?order=-updatedAt"
-            
+                return EndPoints.base + "/StudentLocation?order=-updatedAt"
             }
         }
     
@@ -40,7 +38,9 @@ class ParseClient {
         }
     }
     
-    
+    //MARK: - Request
+    // Used for all new functions that need a request Useing JSON
+    // Returns StudentInfo? and an error
     class func requestGetStudents(url: URL, completionHandler: @escaping ([StudentInformation]?,Error?)->Void) {
         var request = URLRequest(url: url)
         request.addValue(ParseApplicationID, forHTTPHeaderField: "X-Parse-Application-Id")
@@ -49,7 +49,6 @@ class ParseClient {
             (data, response, error) in
             // guard there is data
             guard let data = data else {
-                // TODO: CompleteHandler can return error
                 DispatchQueue.main.async {
                     completionHandler(nil, error)
                 }
@@ -73,6 +72,8 @@ class ParseClient {
         downloadTask.resume()
     }
     
+    // MARK: - Get Locations
+    // Returns locations of all pins associated to the student
     class func requestOrderedLocations(completion: @escaping([StudentInformation]?, Error?)->Void){
         requestGetStudents(url: EndPoints.orderedStudentsLocation.url) { (response, error) in
             guard let response = response else {
@@ -84,6 +85,8 @@ class ParseClient {
         }
     }
     
+    //MARK: -  Get Limited Locations
+    // Returns a limit of 100 students not to over transfer data and use up uneeded resources
     class func requestLimitedStudents(completion: @escaping ([StudentInformation]?, Error?)-> Void){
         requestGetStudents(url: EndPoints.allStudentLocation.url) { (response, error) in
             guard let response = response else {
@@ -95,7 +98,8 @@ class ParseClient {
         }
     }
     
-    
+    //MARK - Post New Location
+    // Posts a new location to the API
     class func requestPostStudentInfo(postData:NewLocation, completionHandler: @escaping (PostLocationResponse?,Error?)->Void) {
         let endpoint:URL = EndPoints.singleStudentLocation.url
         var request = URLRequest(url: endpoint)
@@ -111,6 +115,7 @@ class ParseClient {
         let task = URLSession.shared.dataTask(with: request) {
             (data, response, error) in
             guard let data = data else {
+                // No data
                 print(error!)
                 DispatchQueue.main.async {
                     completionHandler(nil,error)
@@ -120,6 +125,7 @@ class ParseClient {
             
             let jsonDecoder = JSONDecoder()
             do {
+                //Start decoing into PostLocationResponse
                 print(data.base64EncodedString())
                 let decodedData = try jsonDecoder.decode(PostLocationResponse.self, from: data)
                 print(decodedData)
@@ -127,6 +133,7 @@ class ParseClient {
                     completionHandler(decodedData,nil)
                 }
             } catch {
+                //Data decoding failed
                 DispatchQueue.main.async {
                     completionHandler(nil,error)
                 }

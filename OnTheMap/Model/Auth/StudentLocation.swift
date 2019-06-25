@@ -9,7 +9,6 @@
 import Foundation
 
 struct AllStudentInfo : Codable {
-    
     let results:[StudentInformation]
 }
 
@@ -29,6 +28,7 @@ struct StudentInformation: Codable {
     let uniqueKey: String?
     let updatedAt: String?
     
+    // Checking to make sure usernames arnt nil and if they are post so.
     var fullName: String {
         var name = ""
         if firstName != nil {
@@ -44,6 +44,7 @@ struct StudentInformation: Codable {
         return name
     }
     
+    // Checks for nil URL
     var userUrl: String {
         if mediaURL != nil {
         return  "\(mediaURL!)"
@@ -52,9 +53,11 @@ struct StudentInformation: Codable {
     }
 }
 
+//Returned info from login session
 struct StudentInfo: Codable {
     let nickname: String
 }
+
 
 struct User: Codable {
     let lastname: String

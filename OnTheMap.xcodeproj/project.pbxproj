@@ -97,7 +97,6 @@
 				84C2B20122383811001CCFB5 /* UdacityClient.swift */,
 				8474D5B3224BECE100533F0F /* ParseClient.swift */,
 				84C2B20A2238771B001CCFB5 /* Auth */,
-				84C2B20322383917001CCFB5 /* UdacityResponses */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -105,12 +104,12 @@
 		84C2B1FB2238354D001CCFB5 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				8474D5B5224D4E3B00533F0F /* Extensions */,
 				84C2B1FF22383608001CCFB5 /* LogInViewControler.swift */,
 				84C2B20B22387D2F001CCFB5 /* MapViewController.swift */,
 				84C2B21722398C10001CCFB5 /* TableViewController.swift */,
 				8495D7D122430A8C00BE2223 /* PostLocationViewController.swift */,
 				8495D7CD2241BD5C00BE2223 /* FindLocationViewController.swift */,
+				8474D5B5224D4E3B00533F0F /* Extensions */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -124,13 +123,6 @@
 				84C2B1EC22383518001CCFB5 /* OnTheMap.xcdatamodeld */,
 			);
 			path = Assets;
-			sourceTree = "<group>";
-		};
-		84C2B20322383917001CCFB5 /* UdacityResponses */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = UdacityResponses;
 			sourceTree = "<group>";
 		};
 		84C2B20A2238771B001CCFB5 /* Auth */ = {

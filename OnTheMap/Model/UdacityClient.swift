@@ -1,7 +1,9 @@
 //
 //  UdacityClient.swift
 //  OnTheMap
-//
+/*
+    API returns JSON Data in the struct of StudentInfo
+ */
 //  Created by Eli Warner on 3/12/19.
 //  Copyright © 2019 EGW. All rights reserved.
 //
@@ -25,7 +27,7 @@ class UdacityClient: NSObject {
     }
     
     enum EndPoints {
-        static let base = "https://parse.udacity.com/parse/classes"
+        static let base = "https://onthemap-api.udacity.com/v1/"
         case logIn
         case singleStudentLocation
         case delete
@@ -35,21 +37,22 @@ class UdacityClient: NSObject {
             switch self {
 
             case .logIn:
-                return "https://onthemap-api.udacity.com/v1/session"
+                return  EndPoints.base + "session"
             case .singleStudentLocation:
-                return "https://onthemap-api.udacity.com/v1/users/\(Auth.userKey)"
+                return EndPoints.base + "users/\(Auth.userKey)"
             case .delete:
-                return "https://onthemap-api.udacity.com/v1/session"
+                return EndPoints.base + "session"
             }
         }
-        
+        //Used to return a url from created API Strings
         var url: URL {
             return URL(string: stringValue)!
         }
     }
     
     
-    
+    //MARK: - Sign in User to get udacity info
+    // Takes no parameters, returns a StudentInfo? and Error? on escaping.
     class func requestSignedInUserInfo(completionHandler: @escaping (StudentInfo?,Error?)->Void) {
         let url = EndPoints.singleStudentLocation.url
         print(url)
@@ -61,35 +64,41 @@ class UdacityClient: NSObject {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         let downloadTask = URLSession.shared.dataTask(with: request) {
             (data, response, error) in
-            // guard there is data
+            // Guard to make sure there is no error. If error, it will exit into Guard and return
+            // Just an error. Error carried to calling function for use.
             guard let data = data else {
-                // TODO: CompleteHandler can return error
                 DispatchQueue.main.async {
                     completionHandler(nil, error)
                 }
                 return
             }
+            // First 5 chars returned from API must be stripped away before using the returned
+            // JSON data for decoding into StudentInfo
             let range = Range(5..<data.count)
             let newData = data.subdata(in: range)
             let jsonDecoder = JSONDecoder()
             do {
+                //Decode data into StudentInfo
                 let result = try jsonDecoder.decode(StudentInfo.self, from: newData)
                 DispatchQueue.main.async {
+                    //data was able to decode into StudentInfo
                     completionHandler(result, nil)
                 }
                 
             } catch {
+                //Failed to Decode StudentInfo
                 DispatchQueue.main.async {
                     completionHandler(nil,error)
                 }
             }
         }
-        
         downloadTask.resume()
     }
     
    
-    //MARK: POST Requests
+    //MARK: - POST Requests
+    // Genereic Post request to API, reusable taking a URL(URL) and Body(String), escaping Data and Error
+    // Use for adding new features as if Boiler plate code.
     class func taskForPOSTRequest(url: URL, body: String, completion: @escaping (
         Data?, Error?) -> Void)-> URLSessionDataTask{
         var request = URLRequest(url: url)
@@ -140,37 +149,46 @@ class UdacityClient: NSObject {
         return task
     }
 
-    
+    // MARK: - LogInStudent
+    // Log in student to have see all pins dropped for that student and other students.
     class func logInUdacity(password: String, username: String, completion: @escaping (Bool, Error?)->Void){
         let body = "{\"udacity\": {\"username\": \"\(username)\", \"password\": \"\(password)\"}}"
         _ = taskForPOSTRequest(url: EndPoints.logIn.url, body: body, completion: { (data, error) in
-            if let error = error {
+            // Check for missing data
+            guard let data = data else {
                 print(error)
                 completion(false, error)
-            } else {
-                let userSessionData = self.parseUserSession(data: data)
-                if let sessionData = userSessionData.0 {
-                    guard let account = sessionData.account, account.registered == true else {
-                        completion(false, error)
-                        return
-                    }
-                    guard let userSession = sessionData.session else {
-                        completion(false, error)
-                        return
-                    }
-                    Auth.userKey = account.key
-                    print("AuthKey = \(Auth.userKey)")
-                    UserDefaults.standard.set(account.key, forKey: "accountKey")
-                    UserDefaults.standard.set(userSession.id, forKey: "UserSession")
-                    Auth.sessionID = userSession.id
-                    completion(true, nil)
-                } else {
-                    completion(false, error)
-                }
+                return
             }
+            let userSessionData = self.parseUserSession(data: data)
+            if let sessionData = userSessionData.0 {
+                // User data parsed and retuned valid data
+                guard let account = sessionData.account, account.registered == true else {
+                    completion(false, error)
+                    return
+                }
+                guard let userSession = sessionData.session else {
+                    completion(false, error)
+                    return
+                }
+                // Save UserDefaults
+                Auth.userKey = account.key
+                print("AuthKey = \(Auth.userKey)")
+                UserDefaults.standard.set(account.key, forKey: "accountKey")
+                UserDefaults.standard.set(userSession.id, forKey: "UserSession")
+                Auth.sessionID = userSession.id
+                completion(true, nil)
+            } else {
+                // User data didn't parse
+                completion(false, error)
+            }
+            
         })
     }
     
+    //MARK: - Delete Post
+    // Used to remove posts from the map, Only one post is allowed on the map at a time
+    // Must be called before adding a second pin to the map.
     class func taskForDelete(completion: @escaping ()-> Void){
         var request = URLRequest(url: EndPoints.logIn.url)
         request.httpMethod = "DELETE"
@@ -195,7 +213,7 @@ class UdacityClient: NSObject {
         task.resume()
     }
     
-    
+    // MARK: -  Parse student info on return from server. Parsed into UserSession.
     class func parseUserSession(data: Data?) -> (UserSession?, Error?) {
         var studensLocation: (userSession: UserSession?, error: Error?) = (nil, nil)
         do {
