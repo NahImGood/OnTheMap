@@ -90,6 +90,8 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
     }
     
+    //Helper function for reciveing StudentInfo from API call and giving
+    //the info into the pinTableView.
     func handleGetStudentInfos(infos:[StudentInformation]?, error:Error?) {
         guard let infos = infos else {
             showInfo(withMessage: "Unable to Download Student Locations")
@@ -103,7 +105,9 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }
     }
     
-    func verifyUrl (urlString: String?) -> Bool {
+    //Helper for verifying URL. Check to make sure no URL will fail on segue
+    //to safari
+    func verifyUrl(urlString: String?) -> Bool {
         if let urlString = urlString {
             if let url = URL(string: urlString) {
                 return UIApplication.shared.canOpenURL(url)
@@ -112,6 +116,7 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return false
     }
     
+    //Reusable func for displaying alerts to users
     func showAlert(title: String, message: String, titleResponse: String){
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         

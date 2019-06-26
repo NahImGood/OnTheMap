@@ -11,6 +11,7 @@ import MapKit
 
 class PostLocationViewController: UIViewController {
 
+    //MARK: - Properties
     var newLat: Double = 0.0
     var newlong: Double = 0.0
     var userLocation: NewLocation?
@@ -18,27 +19,29 @@ class PostLocationViewController: UIViewController {
     var location: String = ""
     var nickName = UserDefaults.standard.object(forKey: "nickname") as! String
 
-
-    
+    //MARK: - Actions/Outlets
     @IBOutlet weak var mapView: MKMapView!
+    //Starts task for posting to a new location
     @IBAction func postLocationButtonPressed(_ sender: UIButton) {
         setUserInfo()
-        
     }
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setMapAnnotation()
-        // Do any additional setup after loading the view.
     }
     
-
-    
+    //MARK: - PinSetUp
+    //Creates a new location and post requests it to udacity api
     func setUserInfo(){
         let newLocation = NewLocation(uniqueKey: UserDefaults.standard.object(forKey: "accountKey") as! String ,firstName: "", lastName: nickName, mapString: location, mediaURL:mediaURL, latitude:newLat, longitude:newlong)
         ParseClient.requestPostStudentInfo(postData: newLocation, completionHandler: handlePostLocationReponse(postLocationResponse:error:))
     }
     
+    //Creates the placeholder pin for posting a new location before being made into a
+    //Perminent location marker. To be perminent must be posted through api and then
+    //reloaded when updating map/table view
     func setMapAnnotation() {
         let lat = CLLocationDegrees(newLat)
         let long = CLLocationDegrees(newlong)
@@ -52,7 +55,7 @@ class PostLocationViewController: UIViewController {
 
     }
     
- 
+    //Helper function for handling Posting the location response
     func handlePostLocationReponse(postLocationResponse:PostLocationResponse?, error:Error?) {
         
         guard let response = postLocationResponse else {
