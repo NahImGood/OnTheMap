@@ -12,10 +12,17 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
     //MARK: Outlets
     @IBOutlet weak var pinTableView: UITableView!
+    //Reloads the view.
     @IBAction func reloadTableViewButton(_ sender: UIBarButtonItem) {
         reload()
     }
     
+    //MARK: - Properties
+    var studentInfos: [StudentInformation] = [StudentInformation]()
+    
+    //MARK - Logout
+    //Button used for logging out of udacity client. Upon logout the user the presented
+    //with launch screen for logging back in
     @IBAction func logOut(_ sender: UIBarButtonItem) {
         print("log out pressed")
         UdacityClient.taskForDelete {
@@ -24,9 +31,8 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
             self.dismiss(animated: true, completion: nil)
         }
     }
-
-    var studentInfos: [StudentInformation] = [StudentInformation]()
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         reload()
@@ -36,17 +42,22 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     // MARK: - Table view data source
-    
+    //Sections are sepereated by headers. So one will be okay because all
+    //data is of same type, Student
      func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
+    //Returns number of items in list of students.
+    //If found nil whole page crashes
      func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return studentInfos.count
     }
     
-    
-     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    //creation of student cell in tableView. Any adjustments to ALL cells must be made here.
+    //Uses non custom class of cell. If more function/content needed to be added
+    //create a custom class and cast cell to custom class. (as! "CUSTOMCLASS")
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "studentlocation", for: indexPath)
         
         pinTableView.estimatedRowHeight = 80
@@ -58,13 +69,10 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return cell
     }
     
-    
-    @objc func reload() {
-        ParseClient.requestOrderedLocations(completion: handleGetStudentInfos(infos:error:))
-        
-    }
-    
-     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    //Verifies the students url before posting it to reusable studentCells
+    //Upon selection opens link in safari directing user to link in student name
+    //If found nil or not a web url it will alert user
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let url = studentInfos[indexPath.row].userUrl
         if verifyUrl(urlString: url){
             let temp = URL(string: url)
@@ -74,6 +82,14 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }
     }
 
+    
+    //MARK: - Reload
+    //reloads the student list in tableView
+    @objc func reload() {
+        ParseClient.requestOrderedLocations(completion: handleGetStudentInfos(infos:error:))
+        
+    }
+    
     func handleGetStudentInfos(infos:[StudentInformation]?, error:Error?) {
         guard let infos = infos else {
             showInfo(withMessage: "Unable to Download Student Locations")

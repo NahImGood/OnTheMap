@@ -1,7 +1,10 @@
 //
 //  MapViewController.swift
 //  OnTheMap
-//
+/*
+    Shows map pins on the map. Calls both Udacity and Parse API to get needed info for creating
+    and validating pin information
+ */
 //  Created by Eli Warner on 3/12/19.
 //  Copyright © 2019 EGW. All rights reserved.
 //
@@ -11,22 +14,30 @@ import MapKit
 
 class MapViewController: UIViewController, MKMapViewDelegate  {
     
-    //MARK: Outlets
-    
+    //MARK: - Outlets
     @IBOutlet weak var mapView: MKMapView!
+    
+    //MARK: - Properties
     var sessionID:String = ""
     var mapAnnotations = [MKAnnotation]()
+    var studentInfos:[StudentInformation] = [StudentInformation]()
 
-    //MARK: Actions
+    //MARK: - Actions
+    //Will refresh the mapView
     @IBAction func refreshButtonPressed(_ sender: UIBarButtonItem) {
         reloadMapView()
     }
+    //Segues to make a new pin. Pin is created and placed on the map after pushing new
+    //Pin location to Udacity API
     @IBAction func addPinButtonPressed(_ sender: UIBarButtonItem) {
         DispatchQueue.main.async {
             self.performSegue(withIdentifier: "addLocation", sender: nil)
         }
     }
     
+    //MARK - Logout
+    //Button used for logging out of udacity client. Upon logout the user the presented
+    //with launch screen for logging back in
     @IBAction func logOut(_ sender: UIBarButtonItem) {
         print("log out pressed")
         UdacityClient.taskForDelete {
@@ -34,10 +45,9 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         DispatchQueue.main.async {
             self.dismiss(animated: true, completion: nil)
         }
-
     }
-    var studentInfos:[StudentInformation] = [StudentInformation]()
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "On The Map"
@@ -51,20 +61,26 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         reloadMapView()
     }
     
+    //Used to reload the map info by calling Udacity API to retrive all student pins
     @objc func reloadMapView(){
         UdacityClient.requestSignedInUserInfo(completionHandler: handleGetSingleStudentInfo(studentInfo:error:))
         ParseClient.requestLimitedStudents(completion: handleGetStudentInfo(studentInfos:error:))
     }
 
+    //Helper function for converting returned info into StudentInformation struct
+    //Called in reloadMapView
     func handleGetStudentInfo(studentInfos:[StudentInformation]?, error:Error?) {
         guard let studentInfos = studentInfos else {
             showInfo(withMessage: "Unable to Download Student Locations")
             print(error!)
             return
         }
+        //Func auto reloads table data. So no need to reload in this func
         createMapAnnotation(studentInfos:studentInfos)
     }
     
+    //Helper function for adding the nickname to the UserDefaults info.
+    //Called in reloadMapView
     func handleGetSingleStudentInfo(studentInfo:StudentInfo?, error:Error?) {
         guard let studentInfo = studentInfo else {
             showInfo(withMessage: "Unable to Download Your Student Info")
@@ -74,6 +90,8 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         UserDefaults.standard.set(studentInfo.nickname, forKey: "nickname")
     }
     
+    //Converts StudentInformation into pin for placement on the map
+    //Pin is savedto mapAnnotation that feed the map view
     func createMapAnnotation(studentInfos:[StudentInformation]) {
         for info in studentInfos {
             let title = info.fullName
@@ -89,11 +107,12 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
             annotation.subtitle = mediaURL
             mapAnnotations.append(annotation)
         }
-        
+        //Relaods map view for additions of pins
         self.mapView.addAnnotations(mapAnnotations)
     }
     
-    // each pin's rendering
+    //MARK: - MapView
+    //Renders each pin on the map
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         let annotationId = "pin"
         var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: annotationId) as? MKPinAnnotationView
